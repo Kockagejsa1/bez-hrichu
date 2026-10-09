@@ -1,9 +1,10 @@
 {
-  "name": "Den bez hříchů",
-  "short_name": "Bez hříchů",
+  "id": "./?app=den-bez-hrichu",
+  "name": "Den bez hříchů – samostatná aplikace",
+  "short_name": "Den bez hříchů",
   "description": "Počítej dny, hodiny, minuty a sekundy bez svého zlozvyku.",
   "lang": "cs",
-  "start_url": "./",
+  "start_url": "./?app=den-bez-hrichu",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f2f6fc",
