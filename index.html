@@ -90,6 +90,12 @@ function render(){
  const active=!!data.startedAt;
  $('startBtn').textContent=active?'✓ Počítání běží':'▶ Spustit počítání';$('startBtn').disabled=active;$('startBtn').style.opacity=active?'.65':'1';
  const stage=days<15?0:days<30?1:2;
+ const bodyShapes=[
+  'M111 112 Q129 123 150 121 Q172 123 191 112 L208 142 C216 179 237 214 229 251 Q221 284 194 291 Q151 307 106 291 Q79 282 71 251 C63 214 84 179 92 142Z',
+  'M111 112 Q129 123 150 121 Q172 123 191 112 L208 142 C210 185 220 221 205 261 Q151 287 95 261 C80 221 90 185 92 142Z',
+  'M111 112 Q129 123 150 121 Q172 123 191 112 L203 142 L184 280 Q151 293 118 280 L97 142Z'
+ ];
+ $('torso').setAttribute('d',bodyShapes[stage]);
  $('stageBadge').textContent=stage===0?'FÁZE 1 · ZAČÁTEK':stage===1?'FÁZE 2 · PEVNÁ VŮLE':'FÁZE 3 · VE FORMĚ';
  $('personCaption').textContent=stage===0?'Každý začátek se počítá':stage===1?'Už je vidět pokrok!':'Skvělá práce, šampione!';
  $('personSub').textContent=stage===0?'Méně než 15 dní bez hříchu':stage===1?'15 až 29 dní. Jen tak dál!':'30 a více dní. Tvoje vytrvalost roste.';
