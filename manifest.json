@@ -1,0 +1,20 @@
+{
+  "name": "Den bez hříchů",
+  "short_name": "Bez hříchů",
+  "description": "Počítej dny, hodiny, minuty a sekundy bez svého zlozvyku.",
+  "lang": "cs",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f6fc",
+  "theme_color": "#1769e0",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
