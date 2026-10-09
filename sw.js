@@ -1,4 +1,4 @@
-const CACHE='bez-hrichu-v2';
+const CACHE='bez-hrichu-v3';
 const FILES=['./','./index.html','./manifest.json','./icon.svg','./images/fat.webp','./images/middle.webp','./images/fit.webp'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
