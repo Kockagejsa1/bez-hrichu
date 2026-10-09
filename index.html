@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1769e0">
+<meta name="description" content="Sleduj, jak dlouho vydržíš bez svého zlozvyku.">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>Den bez hříchů</title>
+<style>
+:root{color-scheme:light;--blue:#1769e0;--blue2:#0d4fb5;--ink:#182437;--muted:#68758a;--bg:#f2f6fc;--card:#fff;--line:#e1e8f2;--green:#16a36a}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#eaf2ff,#f7f9fc 55%,#e9f4ff);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);min-height:100vh}
+header{padding:22px 24px 16px;text-align:center}h1{margin:0;font-size:clamp(1.65rem,4vw,2.3rem);letter-spacing:-.04em}header p{margin:7px 0 0;color:var(--muted)}
+main{width:min(1000px,100%);margin:auto;padding:8px 18px 28px}.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--card);border:1px solid rgba(220,230,245,.9);border-radius:24px;box-shadow:0 12px 36px #163c7010;overflow:hidden}.timer-panel{padding:clamp(20px,4vw,34px);display:flex;flex-direction:column;min-height:510px}
+.kicker{font-size:.8rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue)}
+.goal-title{font-size:1.35rem;font-weight:800;margin:8px 0 20px;overflow-wrap:anywhere}
+.clock{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 18px}
+.unit{background:#f1f6ff;border:1px solid #e4edfb;border-radius:15px;text-align:center;padding:15px 5px 12px}.number{display:block;font-size:clamp(1.8rem,5vw,2.7rem);font-weight:850;line-height:1.05;font-variant-numeric:tabular-nums;color:var(--blue)}.unit-label{display:block;margin-top:7px;color:var(--muted);font-size:.82rem;font-weight:650}
+.status{padding:12px 14px;border-radius:13px;background:#effaf4;color:#14764f;font-weight:750;font-size:.93rem;margin:0 0 16px}
+.actions{margin-top:auto;display:grid;gap:10px}.btn{border:0;border-radius:13px;padding:14px 16px;font:inherit;font-weight:800;cursor:pointer;transition:transform .15s,filter .15s}.btn:active{transform:scale(.985)}.primary{background:var(--blue);color:white;box-shadow:0 6px 15px #1769e02b}.primary:hover{filter:brightness(.94)}.secondary{background:#edf3fc;color:#23466f}
+.note{font-size:.78rem;color:var(--muted);line-height:1.5;margin:13px 0 0}
+.person-panel{position:relative;min-height:510px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;background:radial-gradient(ellipse at 50% 32%,#dbeaff 0,#f5f8fd 52%,#e9f1fc 100%);padding:20px 14px 22px}
+.person-badge{position:absolute;top:18px;left:18px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:.8rem;font-weight:800;color:var(--blue);box-shadow:0 4px 12px #183b6810}
+.person{width:min(100%,330px);height:385px;display:block;filter:drop-shadow(0 12px 9px #172f5018)}.person-caption{text-align:center;font-weight:850;font-size:1.1rem;margin:8px 0 0}.person-sub{font-size:.82rem;color:var(--muted);text-align:center;margin:4px 0 0}
+.settings{margin-top:18px;padding:20px 22px}.settings h2{font-size:1.05rem;margin:0 0 14px}.form-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}.field{display:grid;gap:7px}.field label{font-size:.84rem;font-weight:750;color:#43536a}.field input{width:100%;min-width:0;border:1px solid #d5dfed;border-radius:12px;padding:12px 13px;font:inherit;background:#fff;color:var(--ink);outline:none}.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #1769e018}
+footer{text-align:center;color:var(--muted);font-size:.78rem;padding:0 18px 24px}
+@media(max-width:680px){header{padding-top:18px}.layout{grid-template-columns:1fr;gap:14px}.timer-panel{min-height:unset;padding:22px}.person-panel{min-height:370px}.person{height:310px;width:min(100%,270px)}.settings{margin-top:14px}.form-row{grid-template-columns:1fr}.form-row .btn{width:100%}.clock{gap:8px}.unit{padding:13px 4px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><h1>💪 Den bez hříchů</h1><p>Každá minuta se počítá. Vydrž a sleduj svůj pokrok.</p></header>
+<main>
+<div class="layout">
+<section class="panel timer-panel" aria-label="Čas bez hříchu">
+<div class="kicker">Tvůj čas bez hříchu</div>
+<div class="goal-title" id="goalTitle">Bez sladkostí</div>
+<div class="clock" aria-live="off">
+<div class="unit"><span class="number" id="days">0</span><span class="unit-label">dní</span></div>
+<div class="unit"><span class="number" id="hours">00</span><span class="unit-label">hodin</span></div>
+<div class="unit"><span class="number" id="minutes">00</span><span class="unit-label">minut</span></div>
+<div class="unit"><span class="number" id="seconds">00</span><span class="unit-label">sekund</span></div>
+</div>
+<div class="status" id="status" role="status">Začni dnes. Zvládneš to!</div>
+<div class="actions"><button class="btn primary" id="startBtn">▶ Spustit počítání</button><button class="btn secondary" id="resetBtn">↻ Začít znovu</button></div>
+<p class="note">Čas běží i po zavření aplikace. Údaje zůstávají uložené v tomto zařízení.</p>
+</section>
+<section class="panel person-panel" aria-label="Postava podle dosaženého pokroku">
+<div class="person-badge" id="stageBadge">FÁZE 1 · ZAČÁTEK</div>
+<svg class="person" id="person" viewBox="0 0 300 400" role="img" aria-label="Animovaná postava cvičence" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd1a0"/><stop offset="1" stop-color="#df8f5d"/></linearGradient><linearGradient id="shirt" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#dce6f3"/></linearGradient></defs>
+<ellipse cx="150" cy="382" rx="83" ry="10" fill="#b5c7df" opacity=".5"/>
+<!-- legs and shoes -->
+<path id="legL" d="M112 279 Q108 319 105 350 L99 370 L126 372 L137 321 L143 282Z" fill="url(#skin)"/><path id="legR" d="M160 282 L170 321 L178 367 L203 367 L194 315 L193 277Z" fill="url(#skin)"/>
+<path d="M97 363 Q86 366 84 379 Q104 390 133 382 L129 369Z" fill="#e52e37"/><path d="M177 362 Q194 359 211 370 L219 383 Q198 390 177 380Z" fill="#e52e37"/><path d="M89 378 L130 379 M181 379 L213 380" stroke="#fff" stroke-width="4"/>
+<!-- arms -->
+<path d="M102 140 Q77 145 69 177 L55 216 Q51 231 64 235 Q76 235 82 218 L104 179 L124 165Z" fill="url(#skin)"/><path d="M194 143 Q219 151 224 181 L237 222 Q240 237 226 239 Q214 238 210 222 L190 181 L178 164Z" fill="url(#skin)"/>
+<!-- head -->
+<path d="M112 47 Q112 16 150 15 Q190 15 190 53 L186 93 Q177 113 151 113 Q124 109 115 88Z" fill="url(#skin)"/><path d="M111 54 Q98 20 132 8 Q165 -2 188 20 L193 47 Q175 32 157 28 Q139 43 112 42Z" fill="#513323"/><path d="M128 57 Q137 51 145 57 M161 57 Q171 50 179 56" fill="none" stroke="#513323" stroke-width="5" stroke-linecap="round"/><ellipse cx="137" cy="69" rx="7" ry="9" fill="#fff"/><ellipse cx="169" cy="68" rx="7" ry="9" fill="#fff"/><circle cx="139" cy="70" r="4" fill="#493323"/><circle cx="170" cy="69" r="4" fill="#493323"/><path d="M139 84 Q154 99 174 83 Q165 106 148 101 Q140 96 139 84" fill="#fff" stroke="#a64c3b" stroke-width="2" stroke-linejoin="round"/>
+<!-- torso shirt -->
+<path id="torso" d="M111 112 Q129 123 150 121 Q172 123 191 112 L208 142 L193 285 Q151 298 106 284 L92 143Z" fill="url(#shirt)" stroke="#c9d7e8" stroke-width="2"/>
+<path d="M111 114 Q121 137 136 137 M190 114 Q180 137 165 137" fill="none" stroke="#b5c8dd" stroke-width="5" stroke-linecap="round"/>
+<path d="M107 283 Q151 295 194 283 L198 310 Q151 324 103 310Z" fill="#e82937"/><path d="M117 289 L120 310 M128 291 L131 313" stroke="#fff" stroke-width="3"/>
+<!-- dumbbells -->
+<g transform="translate(31 198) rotate(-18)"><rect x="0" y="9" width="42" height="7" rx="3" fill="#667487"/><rect x="-4" y="0" width="12" height="25" rx="3" fill="#263447"/><rect x="34" y="-1" width="12" height="27" rx="3" fill="#263447"/></g>
+<g transform="translate(219 205) rotate(18)"><rect x="0" y="9" width="42" height="7" rx="3" fill="#667487"/><rect x="-4" y="0" width="12" height="25" rx="3" fill="#263447"/><rect x="34" y="-1" width="12" height="27" rx="3" fill="#263447"/></g>
+</svg>
+<div class="person-caption" id="personCaption">Každý začátek se počítá</div><div class="person-sub" id="personSub">První krok je nejdůležitější.</div>
+</section>
+</div>
+<section class="panel settings">
+<h2>⚙️ Nastavení tvého cíle</h2>
+<div class="form-row"><div class="field"><label for="goalInput">Čeho se chceš vzdát?</label><input id="goalInput" maxlength="48" value="Bez sladkostí" placeholder="Např. bez sladkostí"></div><button class="btn secondary" id="saveGoal">Uložit cíl</button></div>
+</section>
+</main>
+<footer>Tvůj pokrok, tvoje rozhodnutí. Jeden den po druhém. ❤️</footer>
+<script>
+const KEY='denBezHrichu_v1';
+const $=id=>document.getElementById(id);
+let data={startedAt:null,goal:'Bez sladkostí'};
+try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&typeof saved==='object')data={...data,...saved};}catch(e){}
+function save(){localStorage.setItem(KEY,JSON.stringify(data));}
+function elapsed(){return data.startedAt?Math.max(0,Date.now()-data.startedAt):0;}
+function render(){
+ const total=Math.floor(elapsed()/1000),days=Math.floor(total/86400),hours=Math.floor(total%86400/3600),mins=Math.floor(total%3600/60),secs=total%60;
+ $('days').textContent=days;$('hours').textContent=String(hours).padStart(2,'0');$('minutes').textContent=String(mins).padStart(2,'0');$('seconds').textContent=String(secs).padStart(2,'0');
+ $('goalTitle').textContent=data.goal||'Můj cíl';
+ const active=!!data.startedAt;
+ $('startBtn').textContent=active?'✓ Počítání běží':'▶ Spustit počítání';$('startBtn').disabled=active;$('startBtn').style.opacity=active?'.65':'1';
+ const stage=days<15?0:days<30?1:2;
+ $('stageBadge').textContent=stage===0?'FÁZE 1 · ZAČÁTEK':stage===1?'FÁZE 2 · PEVNÁ VŮLE':'FÁZE 3 · VE FORMĚ';
+ $('personCaption').textContent=stage===0?'Každý začátek se počítá':stage===1?'Už je vidět pokrok!':'Skvělá práce, šampione!';
+ $('personSub').textContent=stage===0?'Méně než 15 dní bez hříchu':stage===1?'15 až 29 dní. Jen tak dál!':'30 a více dní. Tvoje vytrvalost roste.';
+ $('status').textContent=!active?'Začni dnes. Zvládneš to!':days===0?'Výborně! Právě buduješ nový návyk.':days<15?'Skvěle, pokračuj. Každý den se počítá!':days<30?'Už máš za sebou pořádný kus cesty!':'30+ dní! Tvoje vytrvalost je inspirující.';
+ $('goalInput').value=data.goal||'';
+}
+$('startBtn').addEventListener('click',()=>{if(!data.startedAt){data.startedAt=Date.now();save();render();}});
+$('resetBtn').addEventListener('click',()=>{if(confirm('Opravdu chceš vynulovat čas a začít znovu?')){data.startedAt=null;save();render();}});
+$('saveGoal').addEventListener('click',()=>{data.goal=$('goalInput').value.trim()||'Můj cíl';save();render();$('saveGoal').textContent='Uloženo ✓';setTimeout(()=>$('saveGoal').textContent='Uložit cíl',1300);});
+render();setInterval(render,1000);
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
