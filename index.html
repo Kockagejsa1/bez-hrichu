@@ -36,18 +36,13 @@ footer{text-align:center;color:var(--muted);font-size:.78rem;padding:0 18px 24px
 <header><h1>💪 Den bez hříchů</h1><p>Každá minuta se počítá. Vydrž a sleduj svůj pokrok.</p></header>
 <main>
 <div class="layout">
-<section class="panel timer-panel" aria-label="Čas bez hříchu">
-<div class="kicker">Tvůj čas bez hříchu</div>
-<div class="goal-title" id="goalTitle">Bez sladkostí</div>
-<div class="clock" aria-live="off">
-<div class="unit"><span class="number" id="days">0</span><span class="unit-label">dní</span></div>
-<div class="unit"><span class="number" id="hours">00</span><span class="unit-label">hodin</span></div>
-<div class="unit"><span class="number" id="minutes">00</span><span class="unit-label">minut</span></div>
-<div class="unit"><span class="number" id="seconds">00</span><span class="unit-label">sekund</span></div>
-</div>
-<div class="status" id="status" role="status">Začni dnes. Zvládneš to!</div>
-<div class="actions"><button class="btn primary" id="startBtn">▶ Spustit počítání</button><button class="btn secondary" id="resetBtn">↻ Začít znovu</button></div>
-<p class="note">Čas běží i po zavření aplikace. Údaje zůstávají uložené v tomto zařízení.</p>
+<section class="panel timer-panel" aria-label="Tvoje časovače">
+<div class="kicker">Tvůj osobní přehled</div>
+<div class="goal-title">Každý hřích má vlastní čas</div>
+<p style="color:var(--muted);line-height:1.6;margin:0 0 18px">Přidej si sladkosti, alkohol, kouření nebo jakýkoli jiný zlozvyk. Spusť každý časovač zvlášť a sleduj svůj pokrok.</p>
+<div class="status">💪 Jeden den po druhém. Každá minuta se počítá!</div>
+<div class="actions"><button class="btn primary" onclick="document.getElementById('goalInput').focus()">＋ Přidat nový hřích</button></div>
+<p class="note">Časovače se ukládají do tohoto telefonu a pokračují i po zavření aplikace.</p>
 </section>
 <section class="panel person-panel" aria-label="Postava podle dosaženého pokroku">
 <div class="person-badge" id="stageBadge">FÁZE 1 · ZAČÁTEK</div>
