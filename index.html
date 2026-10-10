@@ -35,13 +35,16 @@ footer{text-align:center;color:var(--muted);font-size:.78rem;padding:0 18px 24px
 <body>
 <header><h1>💪 Den bez hříchů</h1><p>Každá minuta se počítá. Vydrž a sleduj svůj pokrok.</p></header>
 <main>
-
+<section class="panel settings" id="habitSection">
+<h2>📋 Moje hříchy a časovače</h2>
+<div id="habitList" class="habit-list"></div>
+<p class="note" id="emptyHabits">Zatím tu nemáš žádný hřích. Přidej první výše.</p>
+</section>
 <section class="panel person-panel" aria-label="Postava podle dosaženého pokroku">
 <div class="person-badge" id="stageBadge">FÁZE 1 · ZAČÁTEK</div>
 <img class="person" id="personImage" src="./images/fat.webp" alt="Cvičenec – začátek bez hříchu">
 <div class="person-caption" id="personCaption">Každý začátek se počítá</div><div class="person-sub" id="personSub">První krok je nejdůležitější.</div>
 </section>
-
 <section class="panel settings">
 <h2>➕ Přidat nový hřích</h2>
 <div class="form-row"><div class="field"><label for="goalInput">Název hříchu nebo zlozvyku</label><input id="goalInput" maxlength="48" value="" placeholder="Např. Sladkosti, alkohol, kouření"></div><button class="btn primary" id="saveGoal">＋ Přidat hřích</button></div>
@@ -54,11 +57,6 @@ footer{text-align:center;color:var(--muted);font-size:.78rem;padding:0 18px 24px
 <div class="status">💪 Jeden den po druhém. Každá minuta se počítá!</div>
 <div class="actions"><button class="btn primary" onclick="document.getElementById('goalInput').focus()">＋ Přidat nový hřích</button></div>
 <p class="note">Časovače se ukládají do tohoto telefonu a pokračují i po zavření aplikace.</p>
-</section>
-<section class="panel settings" id="habitSection">
-<h2>📋 Moje hříchy a časovače</h2>
-<div id="habitList" class="habit-list"></div>
-<p class="note" id="emptyHabits">Zatím tu nemáš žádný hřích. Přidej první výše.</p>
 </section>
 </main>
 <footer>Tvůj pokrok, tvoje rozhodnutí. Jeden den po druhém. ❤️</footer>
