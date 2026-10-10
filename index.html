@@ -77,6 +77,7 @@ try{
  else {
   const old=JSON.parse(localStorage.getItem('denBezHrichu_v1')||'null');
   if(old&&old.goal) habits=[{id:'legacy-'+Date.now(),name:old.goal,startedAt:old.startedAt||null}];
+  else habits=defaultHabits.map(h=>({...h}));
  }
 }catch(e){}
 function save(){localStorage.setItem(KEY,JSON.stringify(habits));}
