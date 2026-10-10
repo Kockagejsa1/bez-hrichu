@@ -25,6 +25,8 @@ main{width:min(1000px,100%);margin:auto;padding:8px 18px 28px}.layout{display:gr
 .person-badge{position:absolute;top:18px;left:18px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:.8rem;font-weight:800;color:var(--blue);box-shadow:0 4px 12px #183b6810}
 .person{width:min(100%,330px);height:385px;display:block;object-fit:contain;mix-blend-mode:multiply;filter:drop-shadow(0 12px 9px #172f5018)}.person-caption{text-align:center;font-weight:850;font-size:1.1rem;margin:8px 0 0}.person-sub{font-size:.82rem;color:var(--muted);text-align:center;margin:4px 0 0}
 .settings{margin-top:18px;padding:20px 22px}.settings h2{font-size:1.05rem;margin:0 0 14px}.form-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}.field{display:grid;gap:7px}.field label{font-size:.84rem;font-weight:750;color:#43536a}.field input{width:100%;min-width:0;border:1px solid #d5dfed;border-radius:12px;padding:12px 13px;font:inherit;background:#fff;color:var(--ink);outline:none}.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #1769e018}
+.habit-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.habit-card{border:1px solid var(--line);border-radius:17px;padding:15px;background:#fbfdff;min-width:0}.habit-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}.habit-name{font-size:1.08rem;font-weight:850;overflow-wrap:anywhere}.remove-btn{border:0;border-radius:9px;width:34px;height:34px;background:#fff0f0;color:#b42318;font-size:1rem;font-weight:800;cursor:pointer;flex-shrink:0}.habit-clock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.habit-unit{background:#edf4ff;border-radius:10px;text-align:center;padding:10px 2px 8px;min-width:0}.habit-unit strong{display:block;color:var(--blue);font-size:clamp(1.1rem,3vw,1.6rem);line-height:1.1;font-variant-numeric:tabular-nums}.habit-unit span{display:block;color:var(--muted);font-size:.68rem;margin-top:5px}.habit-status{font-size:.82rem;color:#14764f;font-weight:700;margin:12px 0}.habit-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.habit-actions .btn{padding:11px 8px;font-size:.86rem}.habit-actions .btn:disabled{opacity:.6;cursor:default}
+@media(max-width:680px){.habit-list{grid-template-columns:1fr}.habit-unit strong{font-size:1.35rem}.habit-unit span{font-size:.72rem}}
 footer{text-align:center;color:var(--muted);font-size:.78rem;padding:0 18px 24px}
 @media(max-width:680px){header{padding-top:18px}.layout{grid-template-columns:1fr;gap:14px}.timer-panel{min-height:unset;padding:22px}.person-panel{min-height:370px}.person{height:310px;width:min(100%,270px)}.settings{margin-top:14px}.form-row{grid-template-columns:1fr}.form-row .btn{width:100%}.clock{gap:8px}.unit{padding:13px 4px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -54,42 +56,84 @@ footer{text-align:center;color:var(--muted);font-size:.78rem;padding:0 18px 24px
 </section>
 </div>
 <section class="panel settings">
-<h2>⚙️ Nastavení tvého cíle</h2>
-<div class="form-row"><div class="field"><label for="goalInput">Čeho se chceš vzdát?</label><input id="goalInput" maxlength="48" value="Bez sladkostí" placeholder="Např. bez sladkostí"></div><button class="btn secondary" id="saveGoal">Uložit cíl</button></div>
+<h2>➕ Přidat nový hřích</h2>
+<div class="form-row"><div class="field"><label for="goalInput">Název hříchu nebo zlozvyku</label><input id="goalInput" maxlength="48" value="" placeholder="Např. Sladkosti, alkohol, kouření"></div><button class="btn primary" id="saveGoal">＋ Přidat hřích</button></div>
+<p class="note">Každý hřích má vlastní časovač. Přidat můžeš tolik položek, kolik potřebuješ.</p>
+</section>
+<section class="panel settings" id="habitSection">
+<h2>📋 Moje hříchy a časovače</h2>
+<div id="habitList" class="habit-list"></div>
+<p class="note" id="emptyHabits">Zatím tu nemáš žádný hřích. Přidej první výše.</p>
 </section>
 </main>
 <footer>Tvůj pokrok, tvoje rozhodnutí. Jeden den po druhém. ❤️</footer>
 <script>
-const KEY='denBezHrichu_v1';
+const KEY='denBezHrichu_multi_v1';
 const $=id=>document.getElementById(id);
-let data={startedAt:null,goal:'Bez sladkostí'};
-try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&typeof saved==='object')data={...data,...saved};}catch(e){}
-function save(){localStorage.setItem(KEY,JSON.stringify(data));}
-function elapsed(){return data.startedAt?Math.max(0,Date.now()-data.startedAt):0;}
-function render(){
- const total=Math.floor(elapsed()/1000),days=Math.floor(total/86400),hours=Math.floor(total%86400/3600),mins=Math.floor(total%3600/60),secs=total%60;
- $('days').textContent=days;$('hours').textContent=String(hours).padStart(2,'0');$('minutes').textContent=String(mins).padStart(2,'0');$('seconds').textContent=String(secs).padStart(2,'0');
- $('goalTitle').textContent=data.goal||'Můj cíl';
- const active=!!data.startedAt;
- $('startBtn').textContent=active?'✓ Počítání běží':'▶ Spustit počítání';$('startBtn').disabled=active;$('startBtn').style.opacity=active?'.65':'1';
- const stage=days<15?0:days<30?1:2;
- const bodyShapes=[
-  'M111 112 Q129 123 150 121 Q172 123 191 112 L208 142 C216 179 237 214 229 251 Q221 284 194 291 Q151 307 106 291 Q79 282 71 251 C63 214 84 179 92 142Z',
-  'M111 112 Q129 123 150 121 Q172 123 191 112 L208 142 C210 185 220 221 205 261 Q151 287 95 261 C80 221 90 185 92 142Z',
-  'M111 112 Q129 123 150 121 Q172 123 191 112 L203 142 L184 280 Q151 293 118 280 L97 142Z'
- ];
+const defaultHabits=[
+ {id:'sweet',name:'Sladkosti',startedAt:null},
+ {id:'alcohol',name:'Alkohol',startedAt:null},
+ {id:'smoking',name:'Kouření',startedAt:null}
+];
+let habits=[];
+try{
+ const saved=JSON.parse(localStorage.getItem(KEY)||'null');
+ if(Array.isArray(saved)) habits=saved.filter(h=>h&&typeof h.id==='string'&&typeof h.name==='string');
+ else {
+  const old=JSON.parse(localStorage.getItem('denBezHrichu_v1')||'null');
+  if(old&&old.goal) habits=[{id:'legacy-'+Date.now(),name:old.goal,startedAt:old.startedAt||null}];
+ }
+}catch(e){}
+function save(){localStorage.setItem(KEY,JSON.stringify(habits));}
+function elapsed(startedAt){return startedAt?Math.max(0,Date.now()-startedAt):0;}
+function parts(startedAt){
+ const total=Math.floor(elapsed(startedAt)/1000);
+ return {days:Math.floor(total/86400),hours:Math.floor(total%86400/3600),mins:Math.floor(total%3600/60),secs:total%60};
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+function renderHabits(){
+ const list=$('habitList');
+ list.innerHTML='';
+ $('emptyHabits').style.display=habits.length?'none':'block';
+ habits.forEach(h=>{
+  const t=parts(h.startedAt), active=!!h.startedAt;
+  const card=document.createElement('article');
+  card.className='habit-card';
+  card.innerHTML=`<div class="habit-head"><div class="habit-name">${escapeHtml(h.name)}</div><button class="remove-btn" data-action="remove" data-id="${escapeHtml(h.id)}" aria-label="Odstranit ${escapeHtml(h.name)}" title="Odstranit">✕</button></div>
+  <div class="habit-clock">
+   <div class="habit-unit"><strong>${t.days}</strong><span>dní</span></div>
+   <div class="habit-unit"><strong>${String(t.hours).padStart(2,'0')}</strong><span>hodin</span></div>
+   <div class="habit-unit"><strong>${String(t.mins).padStart(2,'0')}</strong><span>minut</span></div>
+   <div class="habit-unit"><strong>${String(t.secs).padStart(2,'0')}</strong><span>sekund</span></div>
+  </div>
+  <div class="habit-status">${!active?'Časovač zatím neběží':t.days<15?'Začátek – vydrž!':t.days<30?'Skvělý pokrok, pokračuj!':'Výborně, už 30+ dní!'}</div>
+  <div class="habit-actions"><button class="btn primary" data-action="start" data-id="${escapeHtml(h.id)}" ${active?'disabled':''}>${active?'✓ Počítání běží':'▶ Spustit'}</button><button class="btn secondary" data-action="reset" data-id="${escapeHtml(h.id)}">↻ Vynulovat</button></div>`;
+  list.appendChild(card);
+ });
+ const longest=habits.filter(h=>h.startedAt).sort((a,b)=>elapsed(b.startedAt)-elapsed(a.startedAt))[0];
+ const d=longest?parts(longest.startedAt).days:0, stage=d<15?0:d<30?1:2;
  $('personImage').src=stage===0?'./images/fat.webp':stage===1?'./images/middle.webp':'./images/fit.webp';
  $('personImage').alt=stage===0?'Cvičenec s větším bříškem':stage===1?'Cvičenec s menším bříškem':'Štíhlý vyrýsovaný cvičenec';
  $('stageBadge').textContent=stage===0?'FÁZE 1 · ZAČÁTEK':stage===1?'FÁZE 2 · PEVNÁ VŮLE':'FÁZE 3 · VE FORMĚ';
  $('personCaption').textContent=stage===0?'Každý začátek se počítá':stage===1?'Už je vidět pokrok!':'Skvělá práce, šampione!';
- $('personSub').textContent=stage===0?'Méně než 15 dní bez hříchu':stage===1?'15 až 29 dní. Jen tak dál!':'30 a více dní. Tvoje vytrvalost roste.';
- $('status').textContent=!active?'Začni dnes. Zvládneš to!':days===0?'Výborně! Právě buduješ nový návyk.':days<15?'Skvěle, pokračuj. Každý den se počítá!':days<30?'Už máš za sebou pořádný kus cesty!':'30+ dní! Tvoje vytrvalost je inspirující.';
- $('goalInput').value=data.goal||'';
+ $('personSub').textContent=longest?'Postava podle nejdelšího běžícího časovače': 'Přidej hřích a začni počítat svůj pokrok.';
 }
-$('startBtn').addEventListener('click',()=>{if(!data.startedAt){data.startedAt=Date.now();save();render();}});
-$('resetBtn').addEventListener('click',()=>{if(confirm('Opravdu chceš vynulovat čas a začít znovu?')){data.startedAt=null;save();render();}});
-$('saveGoal').addEventListener('click',()=>{data.goal=$('goalInput').value.trim()||'Můj cíl';save();render();$('saveGoal').textContent='Uloženo ✓';setTimeout(()=>$('saveGoal').textContent='Uložit cíl',1300);});
-render();setInterval(render,1000);
+$('saveGoal').addEventListener('click',()=>{
+ const name=$('goalInput').value.trim();
+ if(!name){$('goalInput').focus();return;}
+ if(habits.some(h=>h.name.toLocaleLowerCase('cs-CZ')===name.toLocaleLowerCase('cs-CZ'))){alert('Tento hřích už v seznamu máš.');return;}
+ habits.push({id:'h-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7),name,startedAt:null});
+ save();$('goalInput').value='';renderHabits();
+});
+$('habitList').addEventListener('click',event=>{
+ const btn=event.target.closest('button[data-action]');if(!btn)return;
+ const h=habits.find(item=>item.id===btn.dataset.id);if(!h)return;
+ if(btn.dataset.action==='start'){if(!h.startedAt)h.startedAt=Date.now();}
+ if(btn.dataset.action==='reset'){if(!confirm('Opravdu chceš vynulovat čas pro „'+h.name+'“?'))return;h.startedAt=null;}
+ if(btn.dataset.action==='remove'){if(!confirm('Opravdu chceš odstranit „'+h.name+'“ a jeho časovač?'))return;habits=habits.filter(item=>item.id!==h.id);}
+ save();renderHabits();
+});
+renderHabits();setInterval(renderHabits,1000);
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
 </body>
