@@ -100,12 +100,12 @@ function renderHabits(){
    <div class="habit-unit"><strong>${String(t.mins).padStart(2,'0')}</strong><span>minut</span></div>
    <div class="habit-unit"><strong>${String(t.secs).padStart(2,'0')}</strong><span>sekund</span></div>
   </div>
-  <div class="habit-status">${!active?'Časovač zatím neběží':t.days<15?'Začátek – vydrž!':t.days<30?'Skvělý pokrok, pokračuj!':'Výborně, už 30+ dní!'}</div>
+  <div class="habit-status">${!active?'Časovač zatím neběží':t.days<7?'Začátek – vydrž!':t.days<30?'Skvělý pokrok, pokračuj!':'Výborně, už 30+ dní!'}</div>
   <div class="habit-actions"><button class="btn primary" data-action="start" data-id="${escapeHtml(h.id)}" ${active?'disabled':''}>${active?'✓ Počítání běží':'▶ Spustit'}</button><button class="btn secondary" data-action="reset" data-id="${escapeHtml(h.id)}">↻ Vynulovat</button></div>`;
   list.appendChild(card);
  });
  const longest=habits.filter(h=>h.startedAt).sort((a,b)=>elapsed(b.startedAt)-elapsed(a.startedAt))[0];
- const d=longest?parts(longest.startedAt).days:0, stage=d<15?0:d<30?1:2;
+ const d=longest?parts(longest.startedAt).days:0, stage=d<7?0:d<30?1:2;
  $('personImage').src=stage===0?'./images/fat.webp':stage===1?'./images/middle.webp':'./images/fit.webp';
  $('personImage').alt=stage===0?'Cvičenec s větším bříškem':stage===1?'Cvičenec s menším bříškem':'Štíhlý vyrýsovaný cvičenec';
  $('stageBadge').textContent=stage===0?'FÁZE 1 · ZAČÁTEK':stage===1?'FÁZE 2 · PEVNÁ VŮLE':'FÁZE 3 · VE FORMĚ';
